@@ -34,7 +34,7 @@
             android:textStyle="bold"/>
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <com.lilong.skinchange.other.SkinListRecyclerView
         android:id="@+id/rc_skin"
         android:layout_width="match_parent"
         android:layout_height="100dp"

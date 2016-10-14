@@ -1,5 +1,6 @@
 package com.lilong.skinchange.manager;
 
+import com.lilong.skinchange.bean.SkinizedAttributeEntry;
 import com.lilong.skinchange.callback.SkinStatusChangeCallback;
 import com.lilong.skinchange.utils.SkinInfo;
 import com.lilong.skinchange.utils.SkinUtil;
@@ -8,9 +9,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +29,11 @@ public class SkinManager {
     private static volatile SkinManager sInstance;
 
     /**
+     * skin info is not found in skinInfos list, return this index as invalid indicator
+     */
+    public static final int SKIN_INFO_INDEX_INVALID = -1;
+
+    /**
      * dir path where skin apks are stored
      */
     private static String SKIN_PACKAGES_DIR_PATH = null;
@@ -33,7 +41,7 @@ public class SkinManager {
     /**
      * name patterns with which certain apks will be regarded as skin apks
      */
-    private static String SKIN_APK_NAME_PATTERN = "skin_.*\\.apk";
+    private static final String SKIN_APK_NAME_PATTERN = "skin_.*\\.apk";
 
     /**
      * skin infos from last load
@@ -46,9 +54,9 @@ public class SkinManager {
     private ArrayList<SkinStatusChangeCallback> skinStatusChangeListeners;
 
     /**
-     * skin info of last applied skin
+     * skin info of current skin
      */
-    private SkinInfo infoLastSkin;
+    private SkinInfo curSkinInfo;
     private SharedPreferences sp;
 
     private SkinManager(Context context) {
@@ -79,8 +87,8 @@ public class SkinManager {
         sInstance = null;
     }
 
-    public void setLastSkinInfo(SkinInfo info) {
-        infoLastSkin = info;
+    public void setCurSkinInfo(SkinInfo info) {
+        curSkinInfo = info;
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(SkinInfo.SP_TAG_SKIN_ID, info.getSkinId());
         editor.putString(SkinInfo.SP_TAG_SKIN_NAME, info.getSkinName());
@@ -89,15 +97,45 @@ public class SkinManager {
         editor.commit();
     }
 
-    public SkinInfo getLastSkinInfo() {
-        if (infoLastSkin == null) {
+    public SkinInfo getCurSkinInfo() {
+        if (curSkinInfo == null) {
             int skinId = sp.getInt(SkinInfo.SP_TAG_SKIN_ID, SkinInfo.SKIN_ID_INVALID);
             String skinName = sp.getString(SkinInfo.SP_TAG_SKIN_NAME, "");
             String skinDescription = sp.getString(SkinInfo.SP_TAG_SKIN_DESCRIPTION, "");
             String skinApkPath = sp.getString(SkinInfo.SP_TAG_SKIN_APK_PATH, "");
-            infoLastSkin = new SkinInfo(skinId, skinName, skinDescription, skinApkPath);
+            curSkinInfo = new SkinInfo(skinId, skinName, skinDescription, skinApkPath);
         }
-        return infoLastSkin;
+        return curSkinInfo;
+    }
+
+    /**
+     * find index of a certain skinInfo in skinInfo's list of this manager
+     */
+    public int getSkinInfoIndex(SkinInfo info) {
+
+        for (int i = 0; i < skinInfos.size(); i++) {
+            if (info.getSkinId() == skinInfos.get(i).getSkinId()) {
+                return i;
+            }
+        }
+
+        return SKIN_INFO_INDEX_INVALID;
+    }
+
+    /**
+     * change skin using a specified skin apk
+     * this apk can be a skin apk, OR this app itself(restore to default skin)
+     *
+     * @param rootView        rootView of android activity/fragment who is using skin change feature
+     * @param skinizedAttrMap hashmap
+     *                        key is a skinized attribute identifier, formed as "resource typename/resource entryname"
+     *                        value is a list, contains all views that have this kind of skinized attribute
+     *                        each ownership relation is a skinizedAttributeEntry
+     * @param info            skinInfo which contains the target skin's information
+     */
+    public void changeSkin(Context context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap, SkinInfo info) {
+        SkinUtil.changeSkin(context, rootView, skinizedAttrMap, info);
+        setCurSkinInfo(info);
     }
 
     public void registerSkinStatusChangeListener(SkinStatusChangeCallback callback) {

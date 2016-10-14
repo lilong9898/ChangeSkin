@@ -1,4 +1,4 @@
-package com.lilong.skinchange.demo;
+package com.lilong.skinchange.base;
 
 import com.lilong.skinchange.manager.SkinManager;
 
@@ -6,9 +6,9 @@ import android.app.Application;
 import android.util.Log;
 
 /**
- * Created by Administrator on 2016/9/3.
+ * skinizable application should inherit this base class
  */
-public class MainApplication extends Application {
+public class SkinApplication extends Application {
 
     SkinManager skinManager;
 

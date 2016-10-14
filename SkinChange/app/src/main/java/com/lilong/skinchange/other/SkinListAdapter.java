@@ -1,4 +1,4 @@
-package com.lilong.skinchange.demo;
+package com.lilong.skinchange.other;
 
 import com.lilong.skinchange.R;
 import com.lilong.skinchange.utils.SkinInfo;
@@ -11,10 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-/**
- * Created by lilong on 16-10-12.
- */
 
 public class SkinListAdapter extends RecyclerView.Adapter<SkinListAdapter.SkinItemViewHolder> {
 

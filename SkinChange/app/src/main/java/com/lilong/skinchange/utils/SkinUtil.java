@@ -29,6 +29,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import dalvik.system.DexClassLoader;
@@ -573,6 +574,75 @@ public class SkinUtil {
             } else if ("cropToPadding".equals(attributeName)) {
                 boolean cropToPadding = skinResources.getBoolean(skinResId);
                 setDeclaredFieldValue(iv.getClass(), "cropToPadding", iv, cropToPadding);
+            }
+        }
+    }
+
+    /**
+     * change skin using a specified skin apk
+     * this apk can be a skin apk, OR this app itself(restore to default skin)
+     *
+     * @param rootView        rootView of android activity/fragment who is using skin change feature
+     * @param skinizedAttrMap hashmap
+     *                        key is a skinized attribute identifier, formed as "resource typename/resource entryname"
+     *                        value is a list, contains all views that have this kind of skinized attribute
+     *                        each ownership relation is a skinizedAttributeEntry
+     * @param info            skinInfo which contains the target skin's information
+     */
+    public static void changeSkin(Context context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap, SkinInfo info) {
+
+        ArrayList<ResourceEntry> list = null;
+        Resources resources = null;
+
+        // restore to default skin
+        if (info.isSelf()) {
+            // parse R.java file of THIS APP's apk, get all attributes and their values(references) in it
+            list = SkinUtil.getThisAppResourceEntries(context);
+            // resources instance from this app
+            resources = context.getResources();
+        }
+        // change skin according to skin apk
+        else {
+            // parse R.java file of skin apk, get all attributes and their values(references) in it
+            list = SkinUtil.getSkinApkResourceEntries(context, context.getClassLoader(), info.getSkinApkPath());
+            // get Resources instance of skin apk
+            resources = SkinUtil.getApkResources(context.getResources(), info.getSkinApkPath());
+        }
+
+        changeSkinByResourceEntries(rootView, skinizedAttrMap, list, resources);
+    }
+
+    /**
+     * change skin using a specified skin apk
+     *
+     * @param rootView        rootView of android activity/fragment who is using skin change feature
+     * @param skinizedAttrMap hashmap
+     *                        key is a skinized attribute identifier, formed as "resource typename/resource entryname"
+     *                        value is a list, contains all views that have this kind of skinized attribute
+     *                        each ownership relation is a skinizedAttributeEntry
+     * @param resourceEntries contains resource entries which are used to match against app's skinized attributes
+     * @param fromResources   matched resource entry will get actual resource value from this resources instance
+     */
+    public static void changeSkinByResourceEntries(View rootView, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap, ArrayList<ResourceEntry> resourceEntries, Resources fromResources) {
+
+        for (ResourceEntry entry : resourceEntries) {
+
+            String key = entry.getTypeName() + "/" + entry.getEntryName();
+
+            if (skinizedAttrMap.containsKey(key)) {
+                ArrayList<SkinizedAttributeEntry> l = skinizedAttrMap.get(key);
+                for (SkinizedAttributeEntry e : l) {
+
+                    View v = e.getViewRef().get();
+                    if (v == null) {
+                        v = rootView.findViewById(e.getViewId());
+                    }
+                    if (v == null) {
+                        continue;
+                    }
+
+                    SkinUtil.applySkinizedAttribute(v, e.getViewAttrName(), fromResources, entry.getResId());
+                }
             }
         }
     }

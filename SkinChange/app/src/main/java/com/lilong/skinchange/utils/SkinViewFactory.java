@@ -9,22 +9,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * intercept activity content view's inflating process
  * when parsing layout xml, get each view's skinizable attributes and store them for future skin change
  */
 
-public abstract class SkinViewFactory implements LayoutInflater.Factory {
+public class SkinViewFactory implements LayoutInflater.Factory {
 
     private static final String TAG = "SkinViewFactory";
 
-    public abstract void onSkinizedAttributeEntriesGenerated(ArrayList<SkinizedAttributeEntry> list);
-
     private LayoutInflater inflater;
+    private HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap;
 
-    public SkinViewFactory(LayoutInflater inflater) {
+    public SkinViewFactory(LayoutInflater inflater, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap) {
         this.inflater = inflater;
+        this.skinizedAttrMap = skinizedAttrMap;
     }
 
     @Override
@@ -44,13 +45,22 @@ public abstract class SkinViewFactory implements LayoutInflater.Factory {
 
             ArrayList<SkinizedAttributeEntry> list = SkinUtil.generateSkinizedAttributeEntry(context, v, attrs);
             for (SkinizedAttributeEntry entry : list) {
+
                 Log.d(TAG, entry.getViewAttrName() + " = @" + entry.getResourceTypeName() + "/" + entry.getResourceEntryName());
+
+                // use attribute type and entry name as key, to identify a skinizable attribute
+                String key = entry.getResourceTypeName() + "/" + entry.getResourceEntryName();
+                if (skinizedAttrMap.containsKey(key)) {
+                    skinizedAttrMap.get(key).add(entry);
+                } else {
+                    ArrayList<SkinizedAttributeEntry> l = new ArrayList<SkinizedAttributeEntry>();
+                    l.add(entry);
+                    skinizedAttrMap.put(key, l);
+                }
             }
 
-            onSkinizedAttributeEntriesGenerated(list);
-
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, Log.getStackTraceString(e));
         }
 
         return v;
