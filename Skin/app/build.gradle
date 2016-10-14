@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 15
+    buildToolsVersion "24.0.2"
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    lintOptions {
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
+    defaultConfig {
+        applicationId "com.lilong.skin"
+        minSdkVersion 15
+        targetSdkVersion 15
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            zipAlignEnabled true
+        }
+    }
+
+    productFlavors {
+        desert {
+
+        }
+        grass {
+
+        }
+        sea {
+
+        }
+    }
+
+    // rename apk to skin_[flavorName].apk
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            def name = new StringBuilder()
+                    .append("skin_")
+                    .append(variant.flavorName)
+                    .append(".apk")
+                    .toString()
+            output.outputFile = new File(file.parent, name)
+        }
+    }
+}
+
+// directory where skin apks are generated
+def FROM_PATH = "build/outputs/apk/"
+
+// directory where skin apks are placed to function
+def DEST_PATH = "../../SkinChange/app/src/main/assets/"
+
+// skin apks' file name pattern
+def SKIN_APK_FILE_NAME_PATTERN = "skin_*.apk"
+
+task buildSkins(dependsOn: "assembleRelease") {
+
+    delete fileTree(DEST_PATH) {
+        include SKIN_APK_FILE_NAME_PATTERN
+    }
+
+    copy {
+        from(FROM_PATH) {
+            include SKIN_APK_FILE_NAME_PATTERN
+        }
+        into DEST_PATH
+    }
+
+}

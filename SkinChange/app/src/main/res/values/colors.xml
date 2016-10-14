@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">@android:color/darker_gray</color>
+    <color name="text">@android:color/darker_gray</color>
+    <color name="skin_list_item_selected">#aaffffff</color>
+    <color name="skin_list_item_not_selected">#55ffffff</color>
+</resources>

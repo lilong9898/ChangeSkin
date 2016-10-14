@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.lilong.skin"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <meta-data
+            android:name="skin_id"
+            android:value="1"/>
+        <meta-data
+            android:name="skin_name"
+            android:value="desert"/>
+        <meta-data
+            android:name="skin_description"
+            android:value="it's desert"/>
+    </application>
+
+</manifest>

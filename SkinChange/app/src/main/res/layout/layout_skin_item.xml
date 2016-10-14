@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/layout_skin_item"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/skin_list_item_background_selector"
+    >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/tv_skin_name"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/tv_skin_description"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tv_skin_name"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="italic"
+            />
+    </RelativeLayout>
+</RelativeLayout>
