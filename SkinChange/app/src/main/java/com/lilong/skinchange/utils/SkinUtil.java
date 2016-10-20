@@ -591,25 +591,25 @@ public class SkinUtil {
      */
     public static void changeSkin(Context context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap, SkinInfo info) {
 
-        ArrayList<ResourceEntry> list = null;
+        ArrayList<ResourceEntry> resourceEntries = null;
         Resources resources = null;
 
         // restore to default skin
         if (info.isSelf()) {
             // parse R.java file of THIS APP's apk, get all attributes and their values(references) in it
-            list = SkinUtil.getThisAppResourceEntries(context);
+            resourceEntries = SkinUtil.getThisAppResourceEntries(context);
             // resources instance from this app
             resources = context.getResources();
         }
         // change skin according to skin apk
         else {
             // parse R.java file of skin apk, get all attributes and their values(references) in it
-            list = SkinUtil.getSkinApkResourceEntries(context, context.getClassLoader(), info.getSkinApkPath());
+            resourceEntries = SkinUtil.getSkinApkResourceEntries(context, context.getClassLoader(), info.getSkinApkPath());
             // get Resources instance of skin apk
             resources = SkinUtil.getApkResources(context.getResources(), info.getSkinApkPath());
         }
 
-        changeSkinByResourceEntries(rootView, skinizedAttrMap, list, resources);
+        changeSkinByResourceEntries(rootView, skinizedAttrMap, resourceEntries, resources);
     }
 
     /**

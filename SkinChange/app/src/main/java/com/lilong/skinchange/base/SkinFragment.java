@@ -26,7 +26,7 @@ public abstract class SkinFragment extends Fragment implements SkinStatusChangeC
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return onCreateViewSkin(false ? inflater : skinLayoutInflater, container, savedInstanceState);
+        return onCreateViewSkin(inflater == null ? inflater : skinLayoutInflater, container, savedInstanceState);
     }
 
     public abstract View onCreateViewSkin(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);

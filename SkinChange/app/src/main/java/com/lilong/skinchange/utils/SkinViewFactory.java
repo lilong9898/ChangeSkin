@@ -1,6 +1,7 @@
 package com.lilong.skinchange.utils;
 
 import com.lilong.skinchange.bean.SkinizedAttributeEntry;
+import com.lilong.skinchange.manager.SkinManager;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -20,14 +21,31 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
     private static final String TAG = "SkinViewFactory";
 
+    private SkinManager skinManager;
+    /**
+     * factory of system LayoutInflater, if not null, execute code of this default factory first
+     * see if it returns a non-null view
+     * this is for android support lib, e.g. FragmentActivity, who set its own factory in onCreate()
+     */
     private LayoutInflater.Factory defaultFactory;
     private LayoutInflater skinInflater;
-    private HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap;
+
+    /**
+     * skinized attr map of this factory's inflater's enclosing activity
+     */
+    private HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMapGlobal;
+
+    /**
+     * a temporary skinizedAttrMap for immediate skin change when completing inflating this view
+     */
+    private HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMapThisView;
 
     public SkinViewFactory(LayoutInflater skinInflater, LayoutInflater.Factory defaultFactory, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap) {
+        this.skinManager = SkinManager.getInstance(skinInflater.getContext());
         this.skinInflater = skinInflater;
         this.defaultFactory = defaultFactory;
-        this.skinizedAttrMap = skinizedAttrMap;
+        this.skinizedAttrMapGlobal = skinizedAttrMap;
+        this.skinizedAttrMapThisView = new HashMap<String, ArrayList<SkinizedAttributeEntry>>();
     }
 
     @Override
@@ -58,12 +76,26 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
                 // use attribute type and entry name as key, to identify a skinizable attribute
                 String key = entry.getResourceTypeName() + "/" + entry.getResourceEntryName();
-                if (skinizedAttrMap.containsKey(key)) {
-                    skinizedAttrMap.get(key).add(entry);
+
+                skinizedAttrMapThisView.clear();
+                if (skinizedAttrMapThisView.containsKey(key)) {
+                    skinizedAttrMapThisView.get(key).add(entry);
                 } else {
                     ArrayList<SkinizedAttributeEntry> l = new ArrayList<SkinizedAttributeEntry>();
                     l.add(entry);
-                    skinizedAttrMap.put(key, l);
+                    skinizedAttrMapThisView.put(key, l);
+                }
+
+                // immediate skin change of this view
+                SkinUtil.changeSkin(skinInflater.getContext(), v, skinizedAttrMapThisView, skinManager.getCurSkinInfo());
+
+                // meanwhile add these skinized attr entries to the global map for future skin change
+                if (skinizedAttrMapGlobal.containsKey(key)) {
+                    skinizedAttrMapGlobal.get(key).add(entry);
+                } else {
+                    ArrayList<SkinizedAttributeEntry> l = new ArrayList<SkinizedAttributeEntry>();
+                    l.add(entry);
+                    skinizedAttrMapGlobal.put(key, l);
                 }
             }
 

@@ -31,7 +31,6 @@ public class DemoActivity extends SkinActivity {
 
         skinManager = SkinManager.getInstance(getApplicationContext());
         SkinInfo lastSkinInfo = skinManager.getCurSkinInfo();
-        skinManager.changeSkin(getApplicationContext(), getWindow().getDecorView(), getSkinizedAttributeEntries(), lastSkinInfo);
 
         vp = (ViewPager) findViewById(R.id.vp);
         rcSkin = (SkinListRecyclerView) findViewById(R.id.rc_skin);
