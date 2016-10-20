@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Skin</string>
-    <string name="text">This is example text, of skin[sea]</string>
+    <string name="tv_title">skin sea test</string>
+    <string name="tv_title_frag">skin sea fragment test</string>
 </resources>

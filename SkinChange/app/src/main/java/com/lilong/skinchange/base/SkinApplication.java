@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class SkinApplication extends Application {
 
-    SkinManager skinManager;
+    private SkinManager skinManager;
 
     @Override
     public void onCreate() {

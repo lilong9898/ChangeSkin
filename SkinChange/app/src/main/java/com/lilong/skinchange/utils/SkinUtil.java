@@ -257,10 +257,10 @@ public class SkinUtil {
 
         String fullClassName = tagName;
 
-        if (tagName.startsWith("android.support")) {
+        if (tagName.indexOf('.') != -1) {
             return tagName;
-        } else if ("ViewStub".equals(tagName)) {
-            fullClassName = "android.view.ViewStub";
+        } else if (tagName.startsWith("View")) {
+            return "android.view." + tagName;
         } else {
             fullClassName = "android.widget." + tagName;
         }
@@ -464,7 +464,7 @@ public class SkinUtil {
             } else if ("textCursorDrawable".equals(attributeName)) {
                 Drawable textCursorDrawable = skinResources.getDrawable(skinResId);
                 Drawable[] mCursorDrawable = new Drawable[]{textCursorDrawable, textCursorDrawable};
-                setDeclaredFieldValue(tv.getClass(), "mCursorDrawable", tv, mCursorDrawable);
+                setFieldValue(tv.getClass(), "mCursorDrawable", tv, mCursorDrawable);
                 tv.invalidate();
             } else if ("lines".equals(attributeName)) {
                 int lines = skinResources.getInteger(skinResId);
@@ -512,11 +512,11 @@ public class SkinUtil {
                 boolean freezesText = skinResources.getBoolean(skinResId);
                 tv.setFreezesText(freezesText);
             } else if (attributeName.startsWith("shadow")) {
-                TextPaint paint = (TextPaint) getDeclaredFieldValue(tv.getClass(), "mTextPaint", tv);
-                float shadowRadius = (Float) getDeclaredFieldValue(paint.getClass(), "shadowRadius", paint);
-                float shadowDx = (Float) getDeclaredFieldValue(paint.getClass(), "shadowDx", paint);
-                float shadowDy = (Float) getDeclaredFieldValue(paint.getClass(), "shadowDy", paint);
-                int shadowColor = (Integer) getDeclaredFieldValue(paint.getClass(), "shadowColor", paint);
+                TextPaint paint = (TextPaint) getFieldValue(tv.getClass(), "mTextPaint", tv);
+                float shadowRadius = (Float) getFieldValue(paint.getClass(), "shadowRadius", paint);
+                float shadowDx = (Float) getFieldValue(paint.getClass(), "shadowDx", paint);
+                float shadowDy = (Float) getFieldValue(paint.getClass(), "shadowDy", paint);
+                int shadowColor = (Integer) getFieldValue(paint.getClass(), "shadowColor", paint);
                 if ("shadowRadius".equals(attributeName)) {
                     tv.setShadowLayer(skinResources.getFraction(skinResId, 1, 1), shadowDx, shadowDy, shadowColor);
                 } else if ("shadowDx".equals(attributeName)) {
@@ -527,8 +527,8 @@ public class SkinUtil {
                     tv.setShadowLayer(shadowRadius, shadowDx, shadowDy, skinResources.getInteger(skinResId));
                 }
             } else if (attributeName.startsWith("lineSpacing")) {
-                float lineSpacingExtra = (Float) getDeclaredFieldValue(tv.getClass(), "mSpacingAdd", tv);
-                float lineSpacingMultiplier = (Float) getDeclaredFieldValue(tv.getClass(), "mSpacingMult", tv);
+                float lineSpacingExtra = (Float) getFieldValue(tv.getClass(), "mSpacingAdd", tv);
+                float lineSpacingMultiplier = (Float) getFieldValue(tv.getClass(), "mSpacingMult", tv);
                 if ("lineSpacingExtra".equals(attributeName)) {
                     tv.setLineSpacing(skinResources.getDimension(skinResId), lineSpacingMultiplier);
                 } else if ("lineSpacingMultiplier".equals(attributeName)) {
@@ -566,14 +566,14 @@ public class SkinUtil {
                 iv.invalidate();
             } else if ("scaleType".equals(attributeName)) {
                 int scaleType = skinResources.getInteger(skinResId);
-                ImageView.ScaleType[] scaleTypeArray = (ImageView.ScaleType[]) getDeclaredFieldValue(iv.getClass(), "sScaleTypeArray", iv);
+                ImageView.ScaleType[] scaleTypeArray = (ImageView.ScaleType[]) getFieldValue(iv.getClass(), "sScaleTypeArray", iv);
                 iv.setScaleType(scaleTypeArray[scaleType]);
             } else if ("tint".equals(attributeName)) {
                 int tint = skinResources.getInteger(skinResId);
                 iv.setColorFilter(tint);
             } else if ("cropToPadding".equals(attributeName)) {
                 boolean cropToPadding = skinResources.getBoolean(skinResId);
-                setDeclaredFieldValue(iv.getClass(), "cropToPadding", iv, cropToPadding);
+                setFieldValue(iv.getClass(), "cropToPadding", iv, cropToPadding);
             }
         }
     }
@@ -647,7 +647,7 @@ public class SkinUtil {
         }
     }
 
-    private static Class loadClass(ClassLoader classLoader, String className) {
+    public static Class loadClass(ClassLoader classLoader, String className) {
 
         Class c = null;
 
@@ -660,7 +660,7 @@ public class SkinUtil {
         return c;
     }
 
-    private static Class loadMemberClass(ClassLoader classLoader, String enclosingClassName, String memberClassName) {
+    public static Class loadMemberClass(ClassLoader classLoader, String enclosingClassName, String memberClassName) {
 
         Class c = null;
 
@@ -679,7 +679,7 @@ public class SkinUtil {
         return c;
     }
 
-    private static Class[] loadMemberClasses(ClassLoader classLoader, String enclosingClassName) {
+    public static Class[] loadMemberClasses(ClassLoader classLoader, String enclosingClassName) {
 
         Class[] c = null;
 
@@ -692,39 +692,96 @@ public class SkinUtil {
         return c;
     }
 
-    private static Object getDeclaredFieldValue(Class clazz, String fieldName) {
-        return getDeclaredFieldValue(clazz, fieldName, null);
-    }
+    public static Field getField(Class clazz, String fieldName) {
 
-    private static Object getDeclaredFieldValue(Class clazz, String fieldName, Object o) {
-
-        Object value = null;
+        Field field = null;
 
         try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
+            field = clazz.getDeclaredField(fieldName);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
 
-            int modifier = field.getModifiers();
+        if (field != null) {
+            return field;
+        }
+
+        try {
+            field = clazz.getField(fieldName);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        return field;
+    }
+
+    public static Method getMethod(Class clazz, String methodName, Class[] argsClasses) {
+
+        Method method = null;
+
+        try {
+            method = clazz.getDeclaredMethod(methodName, argsClasses);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        if (method != null) {
+            return method;
+        }
+
+        try {
+            method = clazz.getMethod(methodName, argsClasses);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        return method;
+    }
+
+    public static Object getFieldValue(Class clazz, String fieldName) {
+        return getFieldValue(clazz, fieldName, null);
+    }
+
+    public static Object getFieldValue(Class clazz, String fieldName, Object o) {
+
+        Object value = null;
+        Field field = getField(clazz, fieldName);
+
+        if (field == null) {
+            return value;
+        }
+
+        field.setAccessible(true);
+
+        int modifier = field.getModifiers();
+        try {
             if (Modifier.isStatic(modifier)) {
                 value = field.get(null);
             } else {
                 value = field.get(o);
             }
-
-            field.setAccessible(false);
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, Log.getStackTraceString(e));
         }
+
+        field.setAccessible(false);
+
         return value;
     }
 
-    private static void setDeclaredFieldValue(Class clazz, String fieldName, Object value) {
-        setDeclaredFieldValue(clazz, fieldName, null, value);
+    public static void setFieldValue(Class clazz, String fieldName, Object value) {
+        setFieldValue(clazz, fieldName, null, value);
     }
 
-    private static void setDeclaredFieldValue(Class clazz, String fieldName, Object o, Object value) {
+    public static void setFieldValue(Class clazz, String fieldName, Object o, Object value) {
+
+        Field field = getField(clazz, fieldName);
+
+        if (field == null) {
+            return;
+        }
+
         try {
-            Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(o, value);
             field.setAccessible(false);
@@ -733,27 +790,32 @@ public class SkinUtil {
         }
     }
 
-    private static void invokeDeclaredMethod(Class c, String methodName, Object[] args) {
-        invokeDeclaredMethod(c, methodName, args, null);
+    public static void invokeMethod(Class c, String methodName, Object[] args) {
+        invokeMethod(c, methodName, args, null);
     }
 
-    private static void invokeDeclaredMethod(Class c, String methodName, Object o) {
-        invokeDeclaredMethod(c, methodName, new Object[]{}, o);
+    public static void invokeMethod(Class c, String methodName, Object o) {
+        invokeMethod(c, methodName, new Object[]{}, o);
     }
 
-    private static void invokeDeclaredMethod(Class c, String methodName) {
-        invokeDeclaredMethod(c, methodName, new Object[]{}, null);
+    public static void invokeMethod(Class c, String methodName) {
+        invokeMethod(c, methodName, new Object[]{}, null);
     }
 
-    private static void invokeDeclaredMethod(Class c, String methodName, Object[] args, Object o) {
+    public static void invokeMethod(Class c, String methodName, Object[] args, Object o) {
 
         Class[] argsClasses = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             argsClasses[i] = args[i].getClass();
         }
 
+        Method method = getMethod(c, methodName, argsClasses);
+
+        if (method == null) {
+            return;
+        }
+
         try {
-            Method method = c.getDeclaredMethod(methodName, argsClasses);
             method.setAccessible(true);
             method.invoke(o, args);
             method.setAccessible(false);

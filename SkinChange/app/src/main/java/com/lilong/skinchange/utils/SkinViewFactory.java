@@ -20,11 +20,13 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
     private static final String TAG = "SkinViewFactory";
 
-    private LayoutInflater inflater;
+    private LayoutInflater.Factory defaultFactory;
+    private LayoutInflater skinInflater;
     private HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap;
 
-    public SkinViewFactory(LayoutInflater inflater, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap) {
-        this.inflater = inflater;
+    public SkinViewFactory(LayoutInflater skinInflater, LayoutInflater.Factory defaultFactory, HashMap<String, ArrayList<SkinizedAttributeEntry>> skinizedAttrMap) {
+        this.skinInflater = skinInflater;
+        this.defaultFactory = defaultFactory;
         this.skinizedAttrMap = skinizedAttrMap;
     }
 
@@ -33,14 +35,20 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
         View v = null;
 
-        // TODO special tag name : can NOT skinize it, let system handle it
-        if ("viewStub".equals(name) || "merge".equals(name) || "include".equals(name) || "blink".equals(name) || "requestFocus".equals(name)) {
-            return null;
+        if (defaultFactory != null) {
+            v = defaultFactory.onCreateView(name, context, attrs);
         }
 
         try {
 
-            v = inflater.createView(SkinUtil.getFullClassNameFromXmlTag(context, name, attrs), null, attrs);
+            if (v == null) {
+
+                String fullClassName = SkinUtil.getFullClassNameFromXmlTag(context, name, attrs);
+                Log.d(TAG, "fullClassName = " + fullClassName);
+
+                v = skinInflater.createView(fullClassName, null, attrs);
+            }
+
             Log.d(TAG, v.getClass().getSimpleName() + "@" + v.hashCode());
 
             ArrayList<SkinizedAttributeEntry> list = SkinUtil.generateSkinizedAttributeEntry(context, v, attrs);
@@ -65,4 +73,5 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
         return v;
     }
+
 }

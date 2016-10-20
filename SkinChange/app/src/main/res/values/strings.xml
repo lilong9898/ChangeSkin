@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SkinChange</string>
-    <string name="text">This is example text, of skin[default]</string>
+    <string name="tv_title">skin default test</string>
+    <string name="tv_title_frag">skin default fragment test</string>
 </resources>
