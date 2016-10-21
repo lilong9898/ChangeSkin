@@ -35,7 +35,7 @@ public class DemoActivity extends SkinActivity {
         vp = (ViewPager) findViewById(R.id.vp);
         rcSkin = (SkinListRecyclerView) findViewById(R.id.rc_skin);
 
-        skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getSkinLayoutInflater());
+        skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getLayoutInflater());
         vp.setAdapter(skinAdapter);
 
         llm = new LinearLayoutManager(getApplicationContext());

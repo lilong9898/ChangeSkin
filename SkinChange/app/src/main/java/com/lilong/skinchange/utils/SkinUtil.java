@@ -634,6 +634,8 @@ public class SkinUtil {
                 for (SkinizedAttributeEntry e : l) {
 
                     View v = e.getViewRef().get();
+                    //TODO duplicate id within the same view tree is a problem
+                    // e.g. when fragment's layout has a child view with the same id as the parent view
                     if (v == null) {
                         v = rootView.findViewById(e.getViewId());
                     }

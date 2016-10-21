@@ -17,14 +17,21 @@ public class DemoFragment extends SkinFragment {
 
     public static final String ARGUMENT_TAG_ID = "argument_tag_id";
 
-    private TextView tvTitleFrag;
+    private TextView tvTitle;
+    private TextView tvNumber;
 
     @Nullable
     @Override
-    public View onCreateViewSkin(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_demo, container, false);
-        tvTitleFrag = (TextView) rootView.findViewById(R.id.tv_title_frag);
-        tvTitleFrag.setText("" + tvTitleFrag.getText() + " " + getArguments().get(ARGUMENT_TAG_ID));
+        tvTitle = (TextView) rootView.findViewById(R.id.tv_title);
+        tvNumber = (TextView) rootView.findViewById(R.id.tv_number);
+
+        String tag = "";
+        if (getArguments() != null && getArguments().getString(ARGUMENT_TAG_ID) != null) {
+            tag = getArguments().getString(ARGUMENT_TAG_ID);
+        }
+        tvNumber.setText(tag);
         return rootView;
     }
 

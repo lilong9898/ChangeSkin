@@ -15,20 +15,17 @@ public class SkinTestFragmentPagerAdapter extends FragmentPagerAdapter {
     private static final int FRAGMENT_COUNT = 4;
 
     private ArrayList<DemoFragment> fragmentList;
-    private LayoutInflater skinLayoutInflater;
 
     public SkinTestFragmentPagerAdapter(FragmentManager fm, LayoutInflater skinLayoutInflater) {
 
         super(fm);
 
         fragmentList = new ArrayList<DemoFragment>();
-        this.skinLayoutInflater = skinLayoutInflater;
 
         for (int i = 0; i < FRAGMENT_COUNT; i++) {
             DemoFragment f = new DemoFragment();
-            f.setSkinLayoutInflater(skinLayoutInflater);
             Bundle bundle = new Bundle();
-            bundle.putInt(DemoFragment.ARGUMENT_TAG_ID, i);
+            bundle.putString(DemoFragment.ARGUMENT_TAG_ID, "" + i);
             f.setArguments(bundle);
             fragmentList.add(f);
         }

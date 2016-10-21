@@ -30,6 +30,13 @@
             android:textStyle="bold|italic"
             />
 
+        <fragment
+            android:id="@+id/frag"
+            android:name="com.lilong.skinchange.demo.DemoFragment"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"/>
+
         <ImageView
             android:id="@+id/iv"
             android:layout_width="match_parent"

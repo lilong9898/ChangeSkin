@@ -3,11 +3,8 @@ package com.lilong.skinchange.base;
 import com.lilong.skinchange.callback.SkinStatusChangeCallback;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * skinizable fragment should inherit this base class
@@ -15,19 +12,15 @@ import android.view.ViewGroup;
 
 public abstract class SkinFragment extends Fragment implements SkinStatusChangeCallback {
 
-    /**
-     * LayoutInflater used for inflating skin support ui
-     */
-    private LayoutInflater skinLayoutInflater;
-
-    public void setSkinLayoutInflater(LayoutInflater skinLayoutInflater) {
-        this.skinLayoutInflater = skinLayoutInflater;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return onCreateViewSkin(inflater == null ? inflater : skinLayoutInflater, container, savedInstanceState);
+    public LayoutInflater getLayoutInflater(Bundle savedInstanceState) {
+
+        if (getActivity() instanceof SkinActivity == false) {
+            return super.getLayoutInflater(savedInstanceState);
+        }
+
+        SkinActivity hostActivity = (SkinActivity) getActivity();
+        return hostActivity.getLayoutInflater() == null ? super.getLayoutInflater(savedInstanceState) : hostActivity.getLayoutInflater();
     }
 
-    public abstract View onCreateViewSkin(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
 }
