@@ -1,4 +1,5 @@
 # High Transparency Android Change Skin Framework
+高透明度安卓换肤框架　*中文README*(README.zh-cn.md)
 ###Features
 #### * dynamically load skin apk for skin resources, no need for apk installation
 #### * change skin by reset views' attributes, no need of regenerating any views, or restarting any components
@@ -389,7 +390,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
         }
     }
 ```
-遍历皮肤包中要换肤的资源ResourceEntry，将其中资源类型和资源名与app中可换肤的资源列表，即SkinizedAttributeEntry的列表来对比. 如果对比上，则将SkinizedAttributeEntry中的控件引用和控件id提取出来，获取到控件，再根据SkinizedAttributeEntry中的属性名，反射调用该控件的对应方法将皮肤包中的资源提取出来，设置到该控件上，实现换肤.
+Traverse the resourceEntries in skin apk, compare the resource type and name against skinizable resources, i.e. the SkinizedAttributeEntry list. If there's a match, extract the view reference and id from SkinizedAttributeEntry, thus getting the view, then fetch the resource value from skin apk. Based on the attribute name in SkinizedAttributeEntry and the aforementioned information, call the attribute setter of this view via reflection, changing the skin.
 
 #### * Change skin by search result, by calling setter via reflection
 ```java
