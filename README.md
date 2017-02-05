@@ -1,5 +1,6 @@
 # High Transparency Android Change Skin Framework
-高透明度安卓换肤框架　*中文README*(README.zh-cn.md)
+*高透明度安卓换肤框架 [中文README](READ.zh-cn.md) *
+
 ###Features
 #### * dynamically load skin apk for skin resources, no need for apk installation
 #### * change skin by reset views' attributes, no need of regenerating any views, or restarting any components
