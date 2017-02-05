@@ -6,6 +6,9 @@
 #### * 支持android.app包中Fragment, Activity的换肤
 #### * 支持android.support.v4.app包中的Fragment, FragmentActivity的换肤
 ***
+### Demo
+![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
+***
 ### 使用方法
 通过Android Studio导入两个project, 分别是Skin和SkinChange，其中Skin用于成皮肤包，SkinChange是demo app.
 建议不要改动两个project的相对位置，这样demo可以直接运行.
