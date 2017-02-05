@@ -1,29 +1,24 @@
-# High Transparency Android Change Skin Framework
-###Features
-#### * dynamically load skin apk for skin resources, no need for apk installation
-#### * change skin by reset views' attributes, no need of regenerating any views, or restarting any components
-#### * search skinizable attributes by matching resource type and name between app & skin package, no need of using user-defined attributes
-#### * support skin change of android.app.Fragment & Activity
-#### * support skin change of android.support.v4.app.Fragment & Activity
+# 高透明度Android换肤框架
+### 特性
+#### * 动态加载皮肤apk获取皮肤资源，皮肤apk无需安装
+#### * 通过重设相关控件的属性来实现换肤，无需重新生成任何控件，无需重启任何组件
+#### * 根据资源类型和引用名匹配原则自动搜索可以换肤的组件和属性，无需任何自定义控件或属性支持
+#### * 支持android.app包中Fragment, Activity的换肤
+#### * 支持android.support.v4.app包中的Fragment, FragmentActivity的换肤
 ***
 ### Demo
 ![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
 ***
-### How to use
+### 使用方法
+通过Android Studio导入两个project, 分别是Skin和SkinChange，其中Skin用于成皮肤包，SkinChange是demo app.
+建议不要改动两个project的相对位置，这样demo可以直接运行.
+#### * 皮肤包的生成
+皮肤包由Skin project生成
 
-Import two projects by Android Studio,  with names of Skin and SkinChange respectively. Project Skin is used to make skin apk, while project SkinChange is the demo app which integrates the framework.
-
-Better not change relative path of these two projects, to ensure demo runs.
-
-#### * How to make skin apk
-Skin package is made by project Skin.
-
-Skin apk contains ONLY resources, no codes. Make multiple skin apks of different skins by setting productFlavor.
-
+皮肤包是仅包含资源，不包含代码的apk. 通过设置productFlavor来同时生成多个皮肤的皮肤包apk：
 ```Groovy
-
-// Skins used for demo, are DESERT (mostly orange color), GRASS(mostly green color) and SEA(mostly blue color).
-// Plus the default skin(mostly gray color), this demo contains 4 skins in total.
+//默认生成用于demo的三个皮肤包，分别是沙漠（橘色），草地（绿色）和海洋（蓝色）的主题
+//另外加上demo app中默认的主题（灰色），本demo一共包含4个皮肤
 productFlavors {
         desert {
 
@@ -36,11 +31,10 @@ productFlavors {
         }
     }
 ```
-Each skin apk contains no java codes, just resources for skin change:
+每个皮肤包不包含java代码，仅包含换肤所用的资源：
 ```xml
-
-<!--these are 3 color resources referenced by skin GRASS -->
-<!-- the resouce value of these 3 color resource references will be changed to the ones in the new skin apk during skin change-->
+<!--这是草地（绿色）皮肤所指定的三个资源引用的颜色值-->
+<!--demo app中所有含有这三个资源引用的属性，都会在换肤时被换成该皮肤包中的资源值-->
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background">@android:color/holo_green_light</color>
@@ -48,9 +42,9 @@ Each skin apk contains no java codes, just resources for skin change:
     <color name="tv_title_frag">@android:color/holo_green_dark</color>
 </resources>
 ```
-When making skin apk, please make sure RES directory structure of each flavor is identical. The resource name should be the same, with only different values. This is to ensure symmetrical appearance of resources in different skin apks. Otherwise if a resource is absent in some skin apks, the value of this resource will NOT change during skin change. 
+生成皮肤包时，务必保证每个flavor的res目录所出现的资源引用是完全一致的，仅资源值不一样.这是为了保证不同皮肤包的资源引用对称，不会出现某个资源引用在某个皮肤里有，另外的皮肤里没有的情况，防止换肤时出现某些资源引用的值无法更新的情况.
 
-When RES directories of different skins are ready, run the gradle task defined in build.gradle:
+不同皮肤的res目录都准备好后，运行builld.gradle中定义的gradle task:
 ```groovy
 task buildSkins(dependsOn: "assembleRelease") {
 
@@ -67,13 +61,12 @@ task buildSkins(dependsOn: "assembleRelease") {
 
 }
 ```
-In demo, this task makes 3 skin apks for 3 flavors. They are the skin packages. Their names are in the form of "skin_[SKIN_NAME]". In demo, the gradle task makes skin_desert.apk, skin_grass.apk & skin_sea.apk. These apks are copied & pasted to the ASSET directory of the demo app. When in need of a skin change, framework loads skin apks from ASSET directory and apply them to the demo app, i.e. changing the skin.
+该task会将三个不同flavor下生成的apk，也就是三个皮肤包，改名成skin_[皮肤名]的形式，此demo中会生成skin_desert.apk, skin_grass.apk和skin_sea.apk. 这三个apk会被该task复制到SkinChange project的assets目录下，也就是将皮肤包装到demo app的assets目录下，以便demo app在换肤时加载.
 
-#### * How to integrate skin change framework
+#### * 换肤框架的接入
+demo app对应于SkinChange project， 其接入了本换肤框架. 接入方法:
 
-Demo app corresponds to project SkinChange. It integrates the skin change framework. Please follow these steps:
-
-(1) Application should extend com.lilong.skinchange.base.SkinApplication:
+(1) Application继承SkinApplication:
 ```xml
 <application
         android:name=".base.SkinApplication"
@@ -83,28 +76,25 @@ Demo app corresponds to project SkinChange. It integrates the skin change framew
         android:theme="@style/AppTheme">
         ....
 ```
-
-(2) Activity should extend com.lilong.skinchange.base.SkinActivity
+(2) Activity继承SkinActivity:
 ```java
 public class DemoActivity extends SkinActivity {
 ....
 ```
-(3) Fragment should extend com.lilong.skinchange.base.SkinFragment
+(3) Fragment继承SkinFragment:
 ```java
 public class DemoFragment extends SkinFragment {
 ...
 ```
-(4) LayoutInflater needs to be acquired from getLayoutInflater() method of SkinActivity & SkinFragment. If system callbacks provide layoutInflater by params, it's ok to use it.
-
+(4) LayoutInflater需要用SkinActivity和SkinFragment的getLayoutInflater()方法来获取. 如果系统方法的传入参数提供了layoutInflater则可用这个inflater，比如:
 ```java
 ...
-
-// when making a FragmentPagerAdapter, the layoutInflater should be acquired by the getLayoutInflater() method in SkinActivity & SkinFragment.
+// 生成一个FragmentPagerAdapter，其内部使用的layoutInflater需要从SkinActivity或SkinFragment的getLayoutInflater()方法获取后再传入
 skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getLayoutInflater());
 ...
 ```
-#### * How to use skin change API
-Use changeSkin(Context　context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntries>> map, SkinInfo info) method of SkinManager to change skin:
+#### * 换肤API的使用
+使用SkinManager的changeSkin(Context　context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntries>> map, SkinInfo info)方法来换肤:
 
 ```java
 ...
@@ -118,23 +108,14 @@ private SkinManager skinManager;
          skinManager.changeSkin(getApplicationContext(), getWindow().getDecorView(), getSkinizedAttributeEntries(), info);
          ....
 ```
+第二个参数rootView为需要换肤的viewTree的rootView，第三个参数是SkinActivity中换肤所需的数据结构，可以通过SkinActivity的getSkinizedAttributeEntries()方法获取，第四个参数是皮肤包信息，可以通过SkinManager的getCurSkinInfo()方法来获取当前皮肤包的信息.
 
-The second param, rootView, is the root view of the SkinActivity or SkinFragment, which needs the skin change feature.
-The third param, is the data structure needed by the skin change framework. This param can be acquired by getSkinizedAttributeEntries() method of SkinActivity.
-The fourth param, is skin apk's info. This param can be acquired by getCurSkinInfo() method of SkinManager, as the info of the current skin. 
+注意：该方法仅对rootView开头的viewTree下所有控件有效，也就是说不同的activity因为rootView不同，需要单独换肤. 而fragment的rootView会在fragment added时被添加到host activity的viewTree里，所以不需单独换肤，hostActivity的换肤会同时作用到其所有的fragment里.
+#### * 换肤规则的约定
+**所有拥有id的View的通过资源引用来赋值的属性，都可以参与换肤;**
 
-Tips: this API works only for the views in the viewTree under rootView. Different activities need their own calls to this API because their rootView are different. 
-The rootView of fragment will be added to the rootView of its host activity during fragment add process, so no need for calling this API in fragment. If an activity changes its skin, all the fragments under its management will change their skins too.
-
-#### * Which are the skinizable attributes
-
-**Theretically, all views which have user-defined id, and have attributes that use resouce references, are able to change their skin.**
-
-**If the resouce name and type of certain attribute, are the same as a resource in the skin apk, the resource value will be changed to the one in skin apk. Then this change will be applied to the view by calling the setter of this view's attributes, via reflection.**
-
-**This is the idea of this framework.**
-
-For example, in project SkinChange，i.e. demo app, the root layout of DemoActivity is:
+**如果该属性的资源引用类型和名字与皮肤包中的某个资源引用的类型和名字都相同，则其值取得是皮肤包中该资源引用的值，由此实现换肤;**
+举例，SkinChange project，即demo app中DemoActivity的布局文件里的根布局RelativeLayout:
 ```xml
 ...
 <RelativeLayout
@@ -146,27 +127,22 @@ For example, in project SkinChange，i.e. demo app, the root layout of DemoActiv
     >
     ...
 ```
-Its attribute "background", referenced a resource, whose type is "color", and name is "background". In aforementioned skin_grass.apk, there's also a resource with the same type and name:
-
+它的background属性使用了资源引用，类型是color，名字是background，而在上文的皮肤包skin_grass.apk的资源中同样出现了类型color，引用名为background的资源:
 ```xml
 ...
 <resources>
     <color name="background">@android:color/holo_green_light</color>
     ...
 ```
-So the attribute "background" used in demo app, will get its resource value from skin apk, making a skin change.
+此时该RelativeLayout的background属性所引用的color类型的名叫background的资源，取值会从皮肤包中取，该属性换肤完成.
 
-#### * Currently supported skinizable views and attributes
-Currently, the framework supports skin change of most attributes of View, TextView and ImageView. Other views and attributes can be taken into account by adding more reflection setter calls in
-public static void applySkinizedAttribute(View v, String attributeName, Resources skinResources, int skinResId)  method of com.lilong.skinchange.utils.SkinUtil.
-
-#### * Default skin
-If no apks whose name is in the form of "skin_[SKIN_NAME].apk", appear in the ASSET directory of project SkinChange, demo app will use its default, mostly gray-color skin. This skin has no corresponding skin apk, because it's just the assembly of initial resource values used by attributes. 
-
+#### * 可换肤的控件和属性
+支持View, TextView和ImageView的大部分属性的换肤.
+#### * 默认皮肤
+如果SkinChange project的assets文件夹中没有任何名字为skin_[皮肤名].apk的文件，则demo app会使用默认的灰色皮肤. 这个皮肤没有对应的皮肤包，就是demo app各控件属性的初始资源引用值，但该皮肤的换肤原理与其他皮肤包相同.其他皮肤和默认皮肤直接可以切换.
 ***
-### Insight of the framework
-#### * ViewFactory intercepts the inflate process of layout xml files, counting and recording skinizable attributes
-
+### 原理
+#### * ViewFactory拦截布局文件的inflate过程，统计可换肤的资源
 ```java
 /**
  * intercept activity content view's inflating process
@@ -264,11 +240,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 }
 ```
-A skinizable attribute is recorded as an SkinizedAttributeEntry. One skinizable attribute of one view can be recorded as such a SkinizedAttributeEntry. 
-The hashmap of complete attribute name : skinizable attributes, is HashMap&lt;String, ArrayList&lt;SkinizedAttributeEntry>>.
-The complete attribute name, i.e. the key of this map, is a string in the form of "[RESOURCE_TYPE]/[RESOURCE_NAME]". 
-The skinizable attributes, i.e. the value of this map, are all the attributes which reference such a resource, recorded by SkinViewFactory during the inflation interception. For example, there's a TextView: 
-
+可换肤的属性以SkinizedAttributeEntry来表示.一个控件的一条可换肤的属性即构成这样一个Entry. 完整的属性名：可换肤属性的对应表为HashMap&lt;String, ArrayList&lt;SkinizedAttributeEntry>>，其中key为引用的资源类型 + "/" + 资源引用名，value为当前SkinViewFactory所拦截的inflate过程中，所有出现的引用了该类型资源，并且引用名为该名称的属性的列表.比如这样一个TextView：
 ```xml
 <TextView
         android:id="@+id/tv_title"
@@ -279,11 +251,11 @@ The skinizable attributes, i.e. the value of this map, are all the attributes wh
         android:textSize="20sp"
         android:textStyle="bold|italic"/>
 ```
-This view leads to two keys, "string/tv_title_frag" and "color/tv_title_frag",　their corresponding value is a one-element ArrayList. "string/tv_title_frag"'s list contains one skinizedAttributeEntry，which contains a reference to this TextView，attribute name "text"，resource type "string" and resource name "tv_title_frag". “color/tv_title_frag"'s list contains one skinizedAttributeEntry，which contains a refrence to this TextView，attribute name "textColor"，resource type"color" and resource name "tv_title_frag". 
+会生成两个key，分别为"string/tv_title_frag"和"color/tv_title_frag",　分别对应的value是一个只有一个元素的ArrayList. "string/tv_title_frag"对应的list包含一个skinizedAttributeEntry，内容是这个TextView控件的引用，属性名text，以及其引用的资源类型string和引用名tv_title_frag. “color/tv_title_frag"对应的list包含一个skinizedAttributeEntry，内容是这个TextView控件的引用，属性名textColor，以及其引用的资源类型color和引用名tv_title_frag. 
 
-Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as a matching dictionary between app and skin apk.
+每个Activity/FragmentActivity会有这样一个skinizedAttrMap，用于换肤时与皮肤apk中的资源进行匹配.
 
-#### * Parse skin apk, record all the resources it contains
+#### * 解析皮肤包，统计要换肤的资源
 ```java
 /**
      * use DexClassLoader to get all resource entries in a specified apk
@@ -321,9 +293,9 @@ Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as 
         return list;
     }
 ```
-A resource is recorded as a ResourceEntry, which contains resource type, resource name, and resource id. These information is acquired by parsing R.java of skin apk via reflection. When finish parsing the resources in a skin apk, the framework returns a list of the resources this apk contains. This is a list of ResourceEntry.
+皮肤包中一条要换肤的资源用ResourceEntry来表示，包含一条资源的资源类型，资源名，资源id. 这些信息通过反射解析皮肤包中的R文件获取.解析一个皮肤包的资源，会返回这个皮肤包中所有要换肤的资源，也就是ResourceEntry的列表.
 
-#### * Build Resources instance of skin apk
+#### * 创建皮肤包的Resources实例
 ```java
 /**
      * get Resources instance of a specified apk
@@ -350,7 +322,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
     }
 ```
 
-#### * Compare resource entries between app and skin apk, search for skinizable resources and attributes 
+#### * 匹配app中可换肤的资源和皮肤包中要换肤的资源
 ```java
 /**
      * change skin using a specified skin apk
@@ -391,7 +363,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
 ```
 遍历皮肤包中要换肤的资源ResourceEntry，将其中资源类型和资源名与app中可换肤的资源列表，即SkinizedAttributeEntry的列表来对比. 如果对比上，则将SkinizedAttributeEntry中的控件引用和控件id提取出来，获取到控件，再根据SkinizedAttributeEntry中的属性名，反射调用该控件的对应方法将皮肤包中的资源提取出来，设置到该控件上，实现换肤.
 
-#### * Change skin by search result, by calling setter via reflection
+#### * 根据匹配情况完成换肤
 ```java
 /**
      * reset view's attribute due to skin change
@@ -437,10 +409,8 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
             v.setPadding(v.getPaddingLeft(), v.
             ......
 ```
-
-Based on view, name of the skinizable attribute, Resources instance of the skin apk, resource id, the framework calls view's setter to change attribute, thus changing skin.
-
-#### * Whole process
+根据控件，需换肤的属性名，皮肤包的Resources实例，皮肤包中的资源id来调用控件的set方法来换肤.
+#### * 完整过程
 ```java
 /**
      * change skin using a specified skin apk
