@@ -18,7 +18,9 @@
 	- [Compare resource entries between app and skin apk, search for skinizable resources and attributes](#compare-resource-entries-between-app-and-skin-apk-search-for-skinizable-resources-and-attributes)
 	- [Change skin by search result, by calling setter via reflection](#change-skin-by-search-result-by-calling-setter-via-reflection)
 	- [Whole process](#whole-process)
-****
+	
+***
+
 ### Features                  
 [toTop](#table-of-content)
 #### * dynamically load skin apk for skin resources, no need for apk installation
@@ -26,11 +28,13 @@
 #### * search skinizable attributes by matching resource type and name between app & skin package, no need of using user-defined attributes
 #### * support skin change of android.app.Fragment & Activity
 #### * support skin change of android.support.v4.app.Fragment & Activity
-****
+***
 ### Demo
 [toTop](#table-of-content)
 ![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
-****
+
+***
+
 ### How to use
 [toTop](#table-of-content)
 Import two projects by Android Studio,  with names of Skin and SkinChange respectively. Project Skin is used to make skin apk, while project SkinChange is the demo app which integrates the framework.
