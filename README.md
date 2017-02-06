@@ -1,6 +1,6 @@
 # High Transparency Android Change Skin Framework
 高透明度安卓换肤框架 [中文README](https://github.com/lilong9898/ChangeSkin/blob/master/README.zh-cn.md)
-
+[中文](README.zh-cn.md)
 ### Table Of Content
 - [Features](#features)
 - [Demo](#demo)
