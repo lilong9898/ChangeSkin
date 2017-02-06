@@ -10,8 +10,8 @@
   - [换肤规则的约定](#换肤规则的约定)  
   - [默认皮肤](#默认皮肤)  
  - [原理](#原理)
-  - [ViewFactory拦截布局文件的inflate过程，统计可换肤的资源](#ViewFactory拦截布局文件的inflate过程，统计可换肤的资源)
-  - [解析皮肤包，统计要换肤的资源](#解析皮肤包，统计要换肤的资源)
+  - [ViewFactory拦截布局文件的inflate过程，统计可换肤的资源](#ViewFactory拦截布局文件的inflate过程统计可换肤的资源)
+  - [解析皮肤包，统计要换肤的资源](#解析皮肤包统计要换肤的资源)
   - [创建皮肤包的Resources实例](#创建皮肤包的resources实例)
   - [匹配app中可换肤的资源和皮肤包中要换肤的资源](#匹配app中可换肤的资源和皮肤包中要换肤的资源)
   - [根据匹配情况完成换肤](#根据匹配情况完成换肤)
@@ -21,7 +21,7 @@
 
 ### 特性
 
-[toTop](＃目录)
+[toTop](#目录)
 
 #### * 动态加载皮肤apk获取皮肤资源，皮肤apk无需安装
 #### * 通过重设相关控件的属性来实现换肤，无需重新生成任何控件，无需重启任何组件
@@ -33,7 +33,7 @@
 
 ### Demo
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
 
@@ -41,14 +41,14 @@
 
 ### 使用方法
 
-[toTop](＃目录)
+[toTop](#目录)
 
 通过Android Studio导入两个project, 分别是Skin和SkinChange，其中Skin用于成皮肤包，SkinChange是demo app.
 建议不要改动两个project的相对位置，这样demo可以直接运行.
 
 #### 皮肤包的生成
 
-[toTop](＃目录)
+[toTop](#目录)
 
 皮肤包由Skin project生成
 
@@ -102,7 +102,7 @@ task buildSkins(dependsOn: "assembleRelease") {
 
 #### 换肤框架的接入
 
-[toTop](＃目录)
+[toTop](#目录)
 
 demo app对应于SkinChange project， 其接入了本换肤框架. 接入方法:
 
@@ -135,7 +135,7 @@ skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getL
 ```
 #### 换肤API的使用
 
-[toTop](＃目录)
+[toTop](#目录)
 
 使用SkinManager的changeSkin(Context　context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntries>> map, SkinInfo info)方法来换肤:
 
@@ -157,7 +157,7 @@ private SkinManager skinManager;
 
 #### 换肤规则的约定
 
-[toTop](＃目录)
+[toTop](#目录)
 
 **所有拥有id的View的通过资源引用来赋值的属性，都可以参与换肤;**
 
@@ -185,13 +185,13 @@ private SkinManager skinManager;
 
 #### 可换肤的控件和属性
 
-[toTop](＃目录)
+[toTop](#目录)
 
 支持View, TextView和ImageView的大部分属性的换肤.
 
 #### 默认皮肤
 
-[toTop](＃目录)
+[toTop](#目录)
 
 如果SkinChange project的assets文件夹中没有任何名字为skin_[皮肤名].apk的文件，则demo app会使用默认的灰色皮肤. 这个皮肤没有对应的皮肤包，就是demo app各控件属性的初始资源引用值，但该皮肤的换肤原理与其他皮肤包相同.其他皮肤和默认皮肤直接可以切换.
 
@@ -199,11 +199,11 @@ private SkinManager skinManager;
 
 ### 原理
 
-[toTop](＃目录)
+[toTop](#目录)
 
 #### ViewFactory拦截布局文件的inflate过程，统计可换肤的资源
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -319,7 +319,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 #### 解析皮肤包，统计要换肤的资源
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -362,7 +362,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 #### 创建皮肤包的Resources实例
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -392,7 +392,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 #### 匹配app中可换肤的资源和皮肤包中要换肤的资源
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -436,7 +436,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 #### 根据匹配情况完成换肤
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -487,7 +487,7 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 #### 完整过程
 
-[toTop](＃目录)
+[toTop](#目录)
 
 ```java
 /**
@@ -524,4 +524,4 @@ public class SkinViewFactory implements LayoutInflater.Factory {
         changeSkinByResourceEntries(rootView, skinizedAttrMap, resourceEntries, resources);
     }
 ```
-[toTop](＃目录)
+[toTop](#目录)
