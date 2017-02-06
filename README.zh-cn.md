@@ -1,5 +1,7 @@
 # 高透明度Android换肤框架
 
+[English README: High Transparency Android Change Skin Framework](README.md)
+
 ### 目录
  - [特性](#特性)
  - [Demo](#demo)
