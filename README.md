@@ -1,7 +1,7 @@
 # High Transparency Android Change Skin Framework
 高透明度安卓换肤框架 [中文README](https://github.com/lilong9898/ChangeSkin/blob/master/README.zh-cn.md)
 
-###Table Of Content
+### Table Of Content
 - [Features](#features)
 - [Demo](#demo)
 - [How to use](#how-to-use)
@@ -140,7 +140,7 @@ public class DemoFragment extends SkinFragment {
 skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getLayoutInflater());
 ...
 ```
-#### * How to use skin change API
+#### How to use skin change API
 
 [toTop](#table-of-content)
 
@@ -166,7 +166,7 @@ The fourth param, is skin apk's info. This param can be acquired by getCurSkinIn
 Tips: this API works only for the views in the viewTree under rootView. Different activities need their own calls to this API because their rootView are different. 
 The rootView of fragment will be added to the rootView of its host activity during fragment add process, so no need for calling this API in fragment. If an activity changes its skin, all the fragments under its management will change their skins too.
 
-#### * Which are the skinizable attributes
+#### Which are the skinizable attributes
 
 [toTop](#table-of-content)
 
@@ -198,12 +198,12 @@ Its attribute "background", referenced a resource, whose type is "color", and na
 ```
 So the attribute "background" used in demo app, will get its resource value from skin apk, making a skin change.
 
-#### * Currently supported skinizable views and attributes
+#### Currently supported skinizable views and attributes
 [toTop](#table-of-content)
 Currently, the framework supports skin change of most attributes of View, TextView and ImageView. Other views and attributes can be taken into account by adding more reflection setter calls in
 public static void applySkinizedAttribute(View v, String attributeName, Resources skinResources, int skinResId)  method of com.lilong.skinchange.utils.SkinUtil.
 
-#### * Default skin
+#### Default skin
 
 [toTop](#table-of-content)
 
@@ -214,7 +214,7 @@ If no apks whose name is in the form of "skin_[SKIN_NAME].apk", appear in the AS
 
 [toTop](#table-of-content)
 
-#### * ViewFactory intercepts the inflate process of layout xml files, record skinizable attributes
+#### ViewFactory intercepts the inflate process of layout xml files, record skinizable attributes
 
 [toTop](#table-of-content)
 
@@ -334,7 +334,7 @@ This view leads to two keys, "string/tv_title_frag" and "color/tv_title_frag",�
 
 Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as a matching dictionary between app and skin apk.
 
-#### * Parse skin apk, record all the resources it contains
+#### Parse skin apk, record all the resources it contains
 
 [toTop](#table-of-content)
 
@@ -377,7 +377,7 @@ Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as 
 ```
 A resource is recorded as a ResourceEntry, which contains resource type, resource name, and resource id. These information is acquired by parsing R.java of skin apk via reflection. When finish parsing the resources in a skin apk, the framework returns a list of the resources this apk contains. This is a list of ResourceEntry.
 
-#### * Build Resources instance of skin apk
+#### Build Resources instance of skin apk
 
 [toTop](#table-of-content)
 
@@ -407,7 +407,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
     }
 ```
 
-#### * Compare resource entries between app and skin apk, search for skinizable resources and attributes 
+#### Compare resource entries between app and skin apk, search for skinizable resources and attributes 
 
 [toTop](#table-of-content)
 
@@ -451,7 +451,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
 ```
 Traverse the resourceEntries in skin apk, compare the resource type and name against skinizable resources, i.e. the SkinizedAttributeEntry list. If there's a match, extract the view reference and id from SkinizedAttributeEntry, thus getting the view, then fetch the resource value from skin apk. Based on the attribute name in SkinizedAttributeEntry and the aforementioned information, call the attribute setter of this view via reflection, changing the skin.
 
-#### * Change skin by search result, by calling setter via reflection
+#### Change skin by search result, by calling setter via reflection
 
 [toTop](#table-of-content)
 
@@ -503,7 +503,7 @@ Traverse the resourceEntries in skin apk, compare the resource type and name aga
 
 Based on view, name of the skinizable attribute, Resources instance of the skin apk, resource id, the framework calls view's setter to change attribute, thus changing skin.
 
-#### * Whole process
+#### Whole process
 
 [toTop](#table-of-content)
 
