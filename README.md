@@ -1,23 +1,44 @@
 # High Transparency Android Change Skin Framework
 高透明度安卓换肤框架 [中文README](https://github.com/lilong9898/ChangeSkin/blob/master/README.zh-cn.md)
 
-###Features
+###Table Of Content
+- [Features](#features)
+- [Demo](#demo)
+- [How to use](#how-to-use)
+	- [How to make skin apk](#how-to-make-skin-apk)
+	- [How to integrate skin change framework](#how-to-integrate-skin-change-framework)
+	- [How to use skin change API](#how-to-use-skin-change-api)
+	- [Which are the skinizable attributes](#which-are-the-skinizable-attributes)
+	- [Currently supported skinizable views and attributes](#currently-supported-skinizable-views-and-attributes)
+	- [Default skin](#default-skin)
+- [Insight of the framework](#insight-of-the-framework)
+	- [ViewFactory intercepts the inflate process of layout xml files, record skinizable attributes](#viewfactory-intercepts-the-inflate-process-of-layout-xml-files-record-skinizable-attributes)
+	- [Parse skin apk, record all the resources it contains](#parse-skin-apk-record-all-the-resources-it-contains)
+	- [Build Resources instance of skin apk](#build-resources-instance-of-skin-apk)
+	- [Compare resource entries between app and skin apk, search for skinizable resources and attributes](#compare-resource-entries-between-app-and-skin-apk-search-for-skinizable-resources-and-attributes)
+	- [Change skin by search result, by calling setter via reflection](#change-skin-by-search-result-by-calling-setter-via-reflection)
+	- [Whole process](#whole-process)
+****
+### Features                  
+[toTop](#table-of-content)
 #### * dynamically load skin apk for skin resources, no need for apk installation
 #### * change skin by reset views' attributes, no need of regenerating any views, or restarting any components
 #### * search skinizable attributes by matching resource type and name between app & skin package, no need of using user-defined attributes
 #### * support skin change of android.app.Fragment & Activity
 #### * support skin change of android.support.v4.app.Fragment & Activity
-***
+****
 ### Demo
+[toTop](#table-of-content)
 ![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
-***
+****
 ### How to use
-
+[toTop](#table-of-content)
 Import two projects by Android Studio,  with names of Skin and SkinChange respectively. Project Skin is used to make skin apk, while project SkinChange is the demo app which integrates the framework.
 
 Better not change relative path of these two projects, to ensure demo runs.
 
 #### * How to make skin apk
+[toTop](#table-of-content)
 Skin package is made by project Skin.
 
 Skin apk contains ONLY resources, no codes. Make multiple skin apks of different skins by setting productFlavor.
@@ -72,7 +93,7 @@ task buildSkins(dependsOn: "assembleRelease") {
 In demo, this task makes 3 skin apks for 3 flavors. They are the skin packages. Their names are in the form of "skin_[SKIN_NAME]". In demo, the gradle task makes skin_desert.apk, skin_grass.apk & skin_sea.apk. These apks are copied & pasted to the ASSET directory of the demo app. When in need of a skin change, framework loads skin apks from ASSET directory and apply them to the demo app, i.e. changing the skin.
 
 #### * How to integrate skin change framework
-
+[toTop](#table-of-content)
 Demo app corresponds to project SkinChange. It integrates the skin change framework. Please follow these steps:
 
 (1) Application should extend com.lilong.skinchange.base.SkinApplication:
@@ -106,6 +127,7 @@ skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getL
 ...
 ```
 #### * How to use skin change API
+[toTop](#table-of-content)
 Use changeSkin(Context　context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntries>> map, SkinInfo info) method of SkinManager to change skin:
 
 ```java
@@ -129,7 +151,7 @@ Tips: this API works only for the views in the viewTree under rootView. Differen
 The rootView of fragment will be added to the rootView of its host activity during fragment add process, so no need for calling this API in fragment. If an activity changes its skin, all the fragments under its management will change their skins too.
 
 #### * Which are the skinizable attributes
-
+[toTop](#table-of-content)
 **Theretically, all views which have user-defined id, and have attributes that use resouce references, are able to change their skin.**
 
 **If the resouce name and type of certain attribute, are the same as a resource in the skin apk, the resource value will be changed to the one in skin apk. Then this change will be applied to the view by calling the setter of this view's attributes, via reflection.**
@@ -159,16 +181,19 @@ Its attribute "background", referenced a resource, whose type is "color", and na
 So the attribute "background" used in demo app, will get its resource value from skin apk, making a skin change.
 
 #### * Currently supported skinizable views and attributes
+[toTop](#table-of-content)
 Currently, the framework supports skin change of most attributes of View, TextView and ImageView. Other views and attributes can be taken into account by adding more reflection setter calls in
 public static void applySkinizedAttribute(View v, String attributeName, Resources skinResources, int skinResId)  method of com.lilong.skinchange.utils.SkinUtil.
 
 #### * Default skin
+[toTop](#table-of-content)
 If no apks whose name is in the form of "skin_[SKIN_NAME].apk", appear in the ASSET directory of project SkinChange, demo app will use its default, mostly gray-color skin. This skin has no corresponding skin apk, because it's just the assembly of initial resource values used by attributes. 
 
-***
+****
 ### Insight of the framework
-#### * ViewFactory intercepts the inflate process of layout xml files, counting and recording skinizable attributes
-
+[toTop](#table-of-content)
+#### * ViewFactory intercepts the inflate process of layout xml files, record skinizable attributes
+[toTop](#table-of-content)
 ```java
 /**
  * intercept activity content view's inflating process
@@ -286,6 +311,7 @@ This view leads to two keys, "string/tv_title_frag" and "color/tv_title_frag",�
 Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as a matching dictionary between app and skin apk.
 
 #### * Parse skin apk, record all the resources it contains
+[toTop](#table-of-content)
 ```java
 /**
      * use DexClassLoader to get all resource entries in a specified apk
@@ -326,6 +352,7 @@ Each SkinActivity/SkinFragmentActivity owns such a skinizedAttrMap，serving as 
 A resource is recorded as a ResourceEntry, which contains resource type, resource name, and resource id. These information is acquired by parsing R.java of skin apk via reflection. When finish parsing the resources in a skin apk, the framework returns a list of the resources this apk contains. This is a list of ResourceEntry.
 
 #### * Build Resources instance of skin apk
+[toTop](#table-of-content)
 ```java
 /**
      * get Resources instance of a specified apk
@@ -353,6 +380,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
 ```
 
 #### * Compare resource entries between app and skin apk, search for skinizable resources and attributes 
+[toTop](#table-of-content)
 ```java
 /**
      * change skin using a specified skin apk
@@ -394,6 +422,7 @@ A resource is recorded as a ResourceEntry, which contains resource type, resourc
 Traverse the resourceEntries in skin apk, compare the resource type and name against skinizable resources, i.e. the SkinizedAttributeEntry list. If there's a match, extract the view reference and id from SkinizedAttributeEntry, thus getting the view, then fetch the resource value from skin apk. Based on the attribute name in SkinizedAttributeEntry and the aforementioned information, call the attribute setter of this view via reflection, changing the skin.
 
 #### * Change skin by search result, by calling setter via reflection
+[toTop](#table-of-content)
 ```java
 /**
      * reset view's attribute due to skin change
@@ -443,6 +472,7 @@ Traverse the resourceEntries in skin apk, compare the resource type and name aga
 Based on view, name of the skinizable attribute, Resources instance of the skin apk, resource id, the framework calls view's setter to change attribute, thus changing skin.
 
 #### * Whole process
+[toTop](#table-of-content)
 ```java
 /**
      * change skin using a specified skin apk
@@ -478,3 +508,4 @@ Based on view, name of the skinizable attribute, Resources instance of the skin 
         changeSkinByResourceEntries(rootView, skinizedAttrMap, resourceEntries, resources);
     }
 ```
+[toTop](#table-of-content)
