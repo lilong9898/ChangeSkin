@@ -4,20 +4,28 @@
  - [Demo](#demo)
  - [使用方法](#使用方法)
  	- [皮肤包的生成](#皮肤包的生成)
+  
+***
+
 ### 特性
 #### * 动态加载皮肤apk获取皮肤资源，皮肤apk无需安装
 #### * 通过重设相关控件的属性来实现换肤，无需重新生成任何控件，无需重启任何组件
 #### * 根据资源类型和引用名匹配原则自动搜索可以换肤的组件和属性，无需任何自定义控件或属性支持
 #### * 支持android.app包中Fragment, Activity的换肤
 #### * 支持android.support.v4.app包中的Fragment, FragmentActivity的换肤
+
 ***
+
 ### Demo
 ![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
+
 ***
+
 ### 使用方法
 通过Android Studio导入两个project, 分别是Skin和SkinChange，其中Skin用于成皮肤包，SkinChange是demo app.
 建议不要改动两个project的相对位置，这样demo可以直接运行.
-#### * 皮肤包的生成
+
+#### 皮肤包的生成
 皮肤包由Skin project生成
 
 皮肤包是仅包含资源，不包含代码的apk. 通过设置productFlavor来同时生成多个皮肤的皮肤包apk：
@@ -68,7 +76,8 @@ task buildSkins(dependsOn: "assembleRelease") {
 ```
 该task会将三个不同flavor下生成的apk，也就是三个皮肤包，改名成skin_[皮肤名]的形式，此demo中会生成skin_desert.apk, skin_grass.apk和skin_sea.apk. 这三个apk会被该task复制到SkinChange project的assets目录下，也就是将皮肤包装到demo app的assets目录下，以便demo app在换肤时加载.
 
-#### * 换肤框架的接入
+#### 换肤框架的接入
+
 demo app对应于SkinChange project， 其接入了本换肤框架. 接入方法:
 
 (1) Application继承SkinApplication:
@@ -98,7 +107,8 @@ public class DemoFragment extends SkinFragment {
 skinAdapter = new SkinTestFragmentPagerAdapter(getSupportFragmentManager(), getLayoutInflater());
 ...
 ```
-#### * 换肤API的使用
+#### 换肤API的使用
+
 使用SkinManager的changeSkin(Context　context, View rootView, HashMap<String, ArrayList<SkinizedAttributeEntries>> map, SkinInfo info)方法来换肤:
 
 ```java
@@ -116,7 +126,9 @@ private SkinManager skinManager;
 第二个参数rootView为需要换肤的viewTree的rootView，第三个参数是SkinActivity中换肤所需的数据结构，可以通过SkinActivity的getSkinizedAttributeEntries()方法获取，第四个参数是皮肤包信息，可以通过SkinManager的getCurSkinInfo()方法来获取当前皮肤包的信息.
 
 注意：该方法仅对rootView开头的viewTree下所有控件有效，也就是说不同的activity因为rootView不同，需要单独换肤. 而fragment的rootView会在fragment added时被添加到host activity的viewTree里，所以不需单独换肤，hostActivity的换肤会同时作用到其所有的fragment里.
-#### * 换肤规则的约定
+
+#### 换肤规则的约定
+
 **所有拥有id的View的通过资源引用来赋值的属性，都可以参与换肤;**
 
 **如果该属性的资源引用类型和名字与皮肤包中的某个资源引用的类型和名字都相同，则其值取得是皮肤包中该资源引用的值，由此实现换肤;**
@@ -141,13 +153,20 @@ private SkinManager skinManager;
 ```
 此时该RelativeLayout的background属性所引用的color类型的名叫background的资源，取值会从皮肤包中取，该属性换肤完成.
 
-#### * 可换肤的控件和属性
+#### 可换肤的控件和属性
+
 支持View, TextView和ImageView的大部分属性的换肤.
-#### * 默认皮肤
+
+#### 默认皮肤
+
 如果SkinChange project的assets文件夹中没有任何名字为skin_[皮肤名].apk的文件，则demo app会使用默认的灰色皮肤. 这个皮肤没有对应的皮肤包，就是demo app各控件属性的初始资源引用值，但该皮肤的换肤原理与其他皮肤包相同.其他皮肤和默认皮肤直接可以切换.
+
 ***
+
 ### 原理
-#### * ViewFactory拦截布局文件的inflate过程，统计可换肤的资源
+
+#### ViewFactory拦截布局文件的inflate过程，统计可换肤的资源
+
 ```java
 /**
  * intercept activity content view's inflating process
@@ -260,7 +279,8 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 
 每个Activity/FragmentActivity会有这样一个skinizedAttrMap，用于换肤时与皮肤apk中的资源进行匹配.
 
-#### * 解析皮肤包，统计要换肤的资源
+#### 解析皮肤包，统计要换肤的资源
+
 ```java
 /**
      * use DexClassLoader to get all resource entries in a specified apk
@@ -300,7 +320,8 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 ```
 皮肤包中一条要换肤的资源用ResourceEntry来表示，包含一条资源的资源类型，资源名，资源id. 这些信息通过反射解析皮肤包中的R文件获取.解析一个皮肤包的资源，会返回这个皮肤包中所有要换肤的资源，也就是ResourceEntry的列表.
 
-#### * 创建皮肤包的Resources实例
+#### 创建皮肤包的Resources实例
+
 ```java
 /**
      * get Resources instance of a specified apk
@@ -327,7 +348,8 @@ public class SkinViewFactory implements LayoutInflater.Factory {
     }
 ```
 
-#### * 匹配app中可换肤的资源和皮肤包中要换肤的资源
+#### 匹配app中可换肤的资源和皮肤包中要换肤的资源
+
 ```java
 /**
      * change skin using a specified skin apk
@@ -368,7 +390,8 @@ public class SkinViewFactory implements LayoutInflater.Factory {
 ```
 遍历皮肤包中要换肤的资源ResourceEntry，将其中资源类型和资源名与app中可换肤的资源列表，即SkinizedAttributeEntry的列表来对比. 如果对比上，则将SkinizedAttributeEntry中的控件引用和控件id提取出来，获取到控件，再根据SkinizedAttributeEntry中的属性名，反射调用该控件的对应方法将皮肤包中的资源提取出来，设置到该控件上，实现换肤.
 
-#### * 根据匹配情况完成换肤
+#### 根据匹配情况完成换肤
+
 ```java
 /**
      * reset view's attribute due to skin change
@@ -415,7 +438,9 @@ public class SkinViewFactory implements LayoutInflater.Factory {
             ......
 ```
 根据控件，需换肤的属性名，皮肤包的Resources实例，皮肤包中的资源id来调用控件的set方法来换肤.
-#### * 完整过程
+
+#### 完整过程
+
 ```java
 /**
      * change skin using a specified skin apk
