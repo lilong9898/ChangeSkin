@@ -47,7 +47,7 @@ Import two projects by Android Studio,  with names of Skin and SkinChange respec
 
 Better not change relative path of these two projects, to ensure demo runs.
 
-#### * How to make skin apk
+#### How to make skin apk
 
 [toTop](#table-of-content)
 
@@ -104,7 +104,7 @@ task buildSkins(dependsOn: "assembleRelease") {
 ```
 In demo, this task makes 3 skin apks for 3 flavors. They are the skin packages. Their names are in the form of "skin_[SKIN_NAME]". In demo, the gradle task makes skin_desert.apk, skin_grass.apk & skin_sea.apk. These apks are copied & pasted to the ASSET directory of the demo app. When in need of a skin change, framework loads skin apks from ASSET directory and apply them to the demo app, i.e. changing the skin.
 
-#### * How to integrate skin change framework
+#### How to integrate skin change framework
 
 [toTop](#table-of-content)
 
