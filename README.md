@@ -199,7 +199,9 @@ Its attribute "background", referenced a resource, whose type is "color", and na
 So the attribute "background" used in demo app, will get its resource value from skin apk, making a skin change.
 
 #### Currently supported skinizable views and attributes
+
 [toTop](#table-of-content)
+
 Currently, the framework supports skin change of most attributes of View, TextView and ImageView. Other views and attributes can be taken into account by adding more reflection setter calls in
 public static void applySkinizedAttribute(View v, String attributeName, Resources skinResources, int skinResId)  method of com.lilong.skinchange.utils.SkinUtil.
 
