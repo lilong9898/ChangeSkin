@@ -36,7 +36,7 @@
 
 [toTop](#table-of-content)
 
-![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
+![image](./demo.gif)
 
 ***
 
