@@ -37,7 +37,7 @@
 
 [toTop](#目录)
 
-![image](https://github.com/lilong9898/ChangeSkin/blob/master/demo.gif)
+![image](./demo.gif)
 
 ***
 
