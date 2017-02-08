@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lilong9898/ChangeSkin.svg?branch=master)](https://travis-ci.org/lilong9898/ChangeSkin)
+
 # 高透明度Android换肤框架
 
 [English README: High Transparency Android Change Skin Framework](README.md)
