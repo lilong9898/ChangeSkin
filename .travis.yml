@@ -8,10 +8,10 @@ android:
     
 
     # The BuildTools version used by your project
-    - build-tools-23.0.1
+    - build-tools-24.0.2
 
     # The SDK version used to compile your project
-    - android-19
+    - android-15
 script:
     cd Skin;
     ./gradlew assembleRelease
